@@ -39,6 +39,9 @@ public class iOSAgent : IronSourceIAgent
 	[DllImport("__Internal")]
 	private static extern string CFGetConversionValue();
 
+	[DllImport("__Internal")]
+	private static extern string CFSetManualLoadRewardedVideo(bool isOn);
+
 	//******************* SDK Init *******************//
 
 	[DllImport("__Internal")]
@@ -54,6 +57,10 @@ public class iOSAgent : IronSourceIAgent
 	private static extern void CFInitISDemandOnly (string appKey, params string[] adUnits);
 
 	//******************* RewardedVideo API *******************//
+
+	[DllImport("__Internal")]
+	private static extern string CFLoadRewardedVideo();
+
 
 	[DllImport("__Internal")]
 	private static extern void CFShowRewardedVideo ();
@@ -231,6 +238,12 @@ public class iOSAgent : IronSourceIAgent
 		return null;
 	}
 
+	public void setManualLoadRewardedVideo(bool isOn)
+	{
+		CFSetManualLoadRewardedVideo(isOn);
+	}
+
+
 	//******************* SDK Init *******************//
 
 	public void setUserId (string userId)
@@ -260,7 +273,12 @@ public class iOSAgent : IronSourceIAgent
 	}
 
 	//******************* RewardedVideo API *******************//
-	
+
+	public void loadManualRewardedVideo()
+	{
+		CFLoadRewardedVideo();
+	}
+
 	public void showRewardedVideo ()
 	{
 		CFShowRewardedVideo ();
@@ -450,6 +468,6 @@ public class iOSAgent : IronSourceIAgent
 		CFSetAdRevenueData(dataSource, json);
 	}
 
-	#endregion
+#endregion
 }
 #endif

@@ -24,6 +24,8 @@ public interface IronSourceIAgent
 
 	int? getConversionValue();
 
+	void setManualLoadRewardedVideo(bool isOn);
+
 	//******************* SDK Init *******************//
 
 	void setUserId (string userId);
@@ -35,6 +37,8 @@ public interface IronSourceIAgent
 	void initISDemandOnly (string appKey, params string[] adUnits);
 
 	//******************* RewardedVideo API *******************//
+
+	void loadManualRewardedVideo();
 
 	void showRewardedVideo ();
 

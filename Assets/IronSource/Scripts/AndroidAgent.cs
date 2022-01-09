@@ -87,6 +87,11 @@ public class AndroidAgent : IronSourceIAgent
 		return null;
 	}
 
+	public void setManualLoadRewardedVideo(bool isOn)
+	{
+		getBridge().Call("setManualLoadRewardedVideo", isOn);
+	}
+
 	//******************* SDK Init *******************//
 
 	public void setUserId(string userId) {
@@ -115,6 +120,11 @@ public class AndroidAgent : IronSourceIAgent
 	}
 
 	//******************* RewardedVideo API *******************//
+
+	public void loadManualRewardedVideo()
+	{
+		getBridge().Call("loadRewardedVideo");
+	}
 
 	public void showRewardedVideo ()
 	{
@@ -307,7 +317,7 @@ public class AndroidAgent : IronSourceIAgent
 		getBridge().Call("setAdRevenueData", dataSource, json);
 	}
 
-	#endregion
+#endregion
 }
 
 #endif

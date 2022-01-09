@@ -16,10 +16,15 @@ public class MainSceneScript : MonoBehaviour
     private List<string> Eventlog = new List<string>();
 
 #if UNITY_ANDROID
-        string sdk_version = "8.9.4";
+        string appKey = "11cfc977d";
+        string sdk_version = "8.9.5";
+        bool rewradedSupported = true;
 #elif UNITY_IPHONE
+        string appKey = "11ec9bd9d";
         string sdk_version = "8.9.1";
+        bool rewradedSupported = false;
 #else
+    string appKey = "unexpected_platform";
     string sdk_version = "unexpected_platform";
 #endif
 
@@ -28,19 +33,6 @@ public class MainSceneScript : MonoBehaviour
 
     public void Start()
     {
-
-#if UNITY_ANDROID
-        string appKey = "11cfc977d";
-        string sdk_version = "8.9.4";
-#elif UNITY_IPHONE
-        string appKey = "11ec9bd9d";
-        string sdk_version = "8.9.1";
-#else
-        string appKey = "unexpected_platform";
-        string sdk_version = "unexpected_platform";
-#endif
-
-
         Debug.Log("unity-script: IronSource.Agent.validateIntegration");
         IronSource.Agent.validateIntegration();
 
@@ -48,6 +40,10 @@ public class MainSceneScript : MonoBehaviour
 
         // SDK init
         Debug.Log("unity-script: IronSource.Agent.init");
+        if (rewradedSupported)
+        {
+            IronSource.Agent.setManualLoadRewardedVideo(true);
+        }
         IronSource.Agent.init(appKey);
 
         Kidoz.init("5", "i0tnrdwdtq0dm36cqcpg6uyuwupkj76s");
@@ -59,14 +55,16 @@ public class MainSceneScript : MonoBehaviour
     {
 
         //Add Rewarded Video Events
-        //IronSourceEvents.onRewardedVideoAdOpenedEvent += RewardedVideoAdOpenedEvent;
-        //IronSourceEvents.onRewardedVideoAdClosedEvent += RewardedVideoAdClosedEvent;
+        IronSourceEvents.onRewardedVideoAdReadyEvent += RewardedVideoAdReadyEvent;
+        IronSourceEvents.onRewardedVideoAdLoadFailedEvent += RewardedVideoAdLoadFailedEvent;
+        IronSourceEvents.onRewardedVideoAdShowFailedEvent += RewardedVideoAdShowFailedEvent;
         //IronSourceEvents.onRewardedVideoAvailabilityChangedEvent += RewardedVideoAvailabilityChangedEvent;
         //IronSourceEvents.onRewardedVideoAdStartedEvent += RewardedVideoAdStartedEvent;
         //IronSourceEvents.onRewardedVideoAdEndedEvent += RewardedVideoAdEndedEvent;
-        //IronSourceEvents.onRewardedVideoAdRewardedEvent += RewardedVideoAdRewardedEvent;
-        //IronSourceEvents.onRewardedVideoAdShowFailedEvent += RewardedVideoAdShowFailedEvent;
-        //IronSourceEvents.onRewardedVideoAdClickedEvent += RewardedVideoAdClickedEvent;
+        IronSourceEvents.onRewardedVideoAdRewardedEvent += RewardedVideoAdRewardedEvent;        
+        IronSourceEvents.onRewardedVideoAdClickedEvent += RewardedVideoAdClickedEvent;
+        IronSourceEvents.onRewardedVideoAdOpenedEvent += RewardedVideoAdOpenedEvent;
+        IronSourceEvents.onRewardedVideoAdClosedEvent += RewardedVideoAdClosedEvent;
 
         Kidoz.onRewardedDone += onRewarded;
         Kidoz.onRewardedVideoStarted += onRewardedVideoStarted;
@@ -91,13 +89,13 @@ public class MainSceneScript : MonoBehaviour
         Kidoz.initSuccess += onKidozInitSuccess;
         Kidoz.initError += onKidozInitError;
 
-        // Add Kidoz Interstitial DemandOnly Events
-        IronSourceEvents.onInterstitialAdReadyDemandOnlyEvent += InterstitialAdReadyDemandOnlyEvent;
-        IronSourceEvents.onInterstitialAdLoadFailedDemandOnlyEvent += InterstitialAdLoadFailedDemandOnlyEvent;
-        IronSourceEvents.onInterstitialAdShowFailedDemandOnlyEvent += InterstitialAdShowFailedDemandOnlyEvent;
-        IronSourceEvents.onInterstitialAdClickedDemandOnlyEvent += InterstitialAdClickedDemandOnlyEvent;
-        IronSourceEvents.onInterstitialAdOpenedDemandOnlyEvent += InterstitialAdOpenedDemandOnlyEvent;
-        IronSourceEvents.onInterstitialAdClosedDemandOnlyEvent += InterstitialAdClosedDemandOnlyEvent;
+        // Add ironSource Interstitial DemandOnly Events
+        //IronSourceEvents.onInterstitialAdReadyDemandOnlyEvent += InterstitialAdReadyDemandOnlyEvent;
+        //IronSourceEvents.onInterstitialAdLoadFailedDemandOnlyEvent += InterstitialAdLoadFailedDemandOnlyEvent;
+        //IronSourceEvents.onInterstitialAdShowFailedDemandOnlyEvent += InterstitialAdShowFailedDemandOnlyEvent;
+        //IronSourceEvents.onInterstitialAdClickedDemandOnlyEvent += InterstitialAdClickedDemandOnlyEvent;
+        //IronSourceEvents.onInterstitialAdOpenedDemandOnlyEvent += InterstitialAdOpenedDemandOnlyEvent;
+        //IronSourceEvents.onInterstitialAdClosedDemandOnlyEvent += InterstitialAdClosedDemandOnlyEvent;
 
 
         // Add Kidoz Banner Events
@@ -123,12 +121,14 @@ public class MainSceneScript : MonoBehaviour
         labelStyle.fontSize = (int)(0.045f * Screen.width);
         labelStyle.normal.textColor = Color.black;
 
+        float lineHeight = 0.15f;
         #region IronSource Mediation
 
-        Rect labelRect = new Rect(0.05f * Screen.width, 0.15f * Screen.height, Screen.width, 0.08f * Screen.height);
+        Rect labelRect = new Rect(0.05f * Screen.width, lineHeight * Screen.height, Screen.width, 0.08f * Screen.height);
         GUI.Label(labelRect, "ironSource v" + is_sdk_version, labelStyle);
 
-        Rect loadInterstitialButton = new Rect(0.10f * Screen.width, 0.20f * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+        lineHeight = lineHeight + 0.05f;
+        Rect loadInterstitialButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
         if (GUI.Button(loadInterstitialButton, "Load Interstitial"))
         {
             Debug.Log("unity-script: LoadInterstitialButtonClicked");
@@ -136,7 +136,7 @@ public class MainSceneScript : MonoBehaviour
             AddEvent("Loading Interstitial");
         }
 
-        Rect showInterstitialButton = new Rect(0.55f * Screen.width, 0.20f * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+        Rect showInterstitialButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
         if (GUI.Button(showInterstitialButton, "Show Interstitial"))
         {
             Debug.Log("unity-script: ShowInterstitialButtonClicked");
@@ -152,41 +152,73 @@ public class MainSceneScript : MonoBehaviour
             }
         }
 
-        #endregion
-
-        #region Kidoz Direct
-
-        Rect labelRect_ = new Rect(0.05f * Screen.width, 0.30f * Screen.height, Screen.width, 0.08f * Screen.height);
-        GUI.Label(labelRect_, "Kidoz Direct v" + sdk_version, labelStyle); 
-
-        Rect loadRewardedButton = new Rect(0.10f * Screen.width, 0.35f * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-        if (GUI.Button(loadRewardedButton, "Load Rewarded"))
+        if (rewradedSupported)
         {
-            Kidoz.loadRewardedAd(false);
-            AddEvent("Loading Rewarded");
+
+            lineHeight = lineHeight + 0.10f;
+            Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+            if (GUI.Button(loadRewardedButton, "Load Rewarded"))
+            {
+                Debug.Log("unity-script: LoadRewardedButtonClicked");
+                IronSource.Agent.loadManualRewardedVideo();
+                AddEvent("Loading Rewarded");
+            }
+
+            Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+            if (GUI.Button(showRewardedButton, "Show Rewarded"))
+            {
+                Debug.Log("unity-script: ShowRewardedButtonClicked");
+                if (IronSource.Agent.isRewardedVideoAvailable())
+                {
+                    IronSource.Agent.showRewardedVideo();
+                    AddEvent("Show Rewarded");
+                }
+                else
+                {
+                    Debug.Log("unity-script: IronSource.Agent.isInterstitialReady - False");
+                    AddEvent("Show Interstitial - Not Ready");
+                }
+            }
         }
 
-        Rect showRewardedButton = new Rect(0.55f * Screen.width, 0.35f * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-        if (GUI.Button(showRewardedButton, "Show Rewarded"))
-        {
-            Kidoz.showRewarded();
-            AddEvent("Show Rewarded");
-        }
+#endregion
 
-        Rect loadBannerButton = new Rect(0.10f * Screen.width, 0.45f * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+#region Kidoz Direct
+        lineHeight = lineHeight + 0.10f;
+        Rect labelRect_ = new Rect(0.05f * Screen.width, lineHeight * Screen.height, Screen.width, 0.08f * Screen.height);
+        GUI.Label(labelRect_, "Kidoz Direct v" + sdk_version, labelStyle);
+        lineHeight = lineHeight + 0.05f;
+        if (!rewradedSupported)
+        {
+            Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+            if (GUI.Button(loadRewardedButton, "Load Rewarded"))
+            {
+                Kidoz.loadRewardedAd(false);
+                AddEvent("Loading Rewarded");
+            }
+
+            Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+            if (GUI.Button(showRewardedButton, "Show Rewarded"))
+            {
+                Kidoz.showRewarded();
+                AddEvent("Show Rewarded");
+            }
+            lineHeight = lineHeight + 0.10f;
+        }
+        Rect loadBannerButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
         if (GUI.Button(loadBannerButton, "Load Banner"))
         {
             Kidoz.loadBanner(true, Kidoz.BANNER_POSITION.BOTTOM_CENTER);
             AddEvent("Loading Bottom Banner");
         }
 
-        Rect destroyBannerButton = new Rect(0.55f * Screen.width, 0.45f * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+        Rect destroyBannerButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
         if (GUI.Button(destroyBannerButton, "Close Banner"))
         {
             Kidoz.hideBanner();
         }
 
-        #endregion
+#endregion
 
         GUIStyle guiStyle = new GUIStyle();
         guiStyle.fontSize = (int)(0.025f * Screen.width);
@@ -199,7 +231,7 @@ public class MainSceneScript : MonoBehaviour
 
 
 
-    #region IronSource Interstitial callback handlers
+#region IronSource Interstitial callback handlers
 
     void InterstitialAdReadyEvent()
     {
@@ -275,8 +307,57 @@ public class MainSceneScript : MonoBehaviour
         Debug.Log("unity-script: I got InterstitialAdClosedDemandOnlyEvent for instance: " + instanceId);
     }
 
+    #endregion
 
+#region IronSource Rewarded callback handlers
 
+    void RewardedVideoAdReadyEvent()
+    {
+        Debug.Log("unity-script: I got RewardedAdReadyEvent");
+        AddEvent("Rewarded Ad Ready");
+    }
+
+    void RewardedVideoAdLoadFailedEvent(IronSourceError error)
+    {
+        Debug.Log("unity-script: I got RewardedAdLoadFailedEvent, code: " + error.getCode() + ", description : " + error.getDescription());
+        AddEvent("Rewarded load failed:\ncode: " + error.getCode() + "\ndescription: " + error.getDescription());
+    }
+
+    void RewardedVideoAdShowSucceededEvent()
+    {
+        Debug.Log("unity-script: I got RewardedAdShowSucceededEvent");
+        AddEvent("Rewarded Ad Show Succeeded");
+    }
+
+    void RewardedVideoAdShowFailedEvent(IronSourceError error)
+    {
+        Debug.Log("unity-script: I got RewardedAdShowFailedEvent, code :  " + error.getCode() + ", description : " + error.getDescription());
+        AddEvent("Rewarded show failed:\ncode: " + error.getCode() + "\ndescription: " + error.getDescription());
+    }
+
+    void RewardedVideoAdClickedEvent(IronSourcePlacement ssp)
+    {
+        Debug.Log("unity-script: I got RewardedAdClickedEvent");
+        AddEvent("Rewarded Ad Clicked");
+    }
+
+    void RewardedVideoAdOpenedEvent()
+    {
+        Debug.Log("unity-script: I got RewardedAdOpenedEvent");
+        AddEvent("Rewarded Ad Opened");
+    }
+
+    void RewardedVideoAdClosedEvent()
+    {
+        Debug.Log("unity-script: I got RewardedAdClosedEvent");
+        AddEvent("Rewarded Ad Closed"); ;
+    }
+
+    void RewardedVideoAdRewardedEvent(IronSourcePlacement ssp)
+    {
+        Debug.Log("unity-script: I got RewardedVideoAdRewardedEvent");
+        AddEvent("Rewarded Ad Rewarded"); ;
+    }
 
     #endregion
 
@@ -299,9 +380,9 @@ public class MainSceneScript : MonoBehaviour
         AddEvent("Kidoz Init error:: " + errMsg);
     }
 
-    #endregion
+#endregion
 
-    #region Kidoz Direct Rewarded callback handlers
+#region Kidoz Direct Rewarded callback handlers
     private void onRewarded(string value)
     {
         print("SampleCode |onRewardedDone");
@@ -343,11 +424,11 @@ public class MainSceneScript : MonoBehaviour
         Kidoz.printToastMessage("SampleCode | rewardedOnNoOffers");
         AddEvent("Rewarded No Offers:: " + value);
     }
-    #endregion
+#endregion
 
 
 
-    #region Kidoz Direct Banner callback handlers
+#region Kidoz Direct Banner callback handlers
     private void bannerReady(string value)
     {
         print("SampleCode | bannerReady");
@@ -376,9 +457,9 @@ public class MainSceneScript : MonoBehaviour
         AddEvent("Banner No Offers:: " + value);
     }
 
-    #endregion
+#endregion
 
-    #endregion
+#endregion
 
     public void AddEvent(string eventString)
     {

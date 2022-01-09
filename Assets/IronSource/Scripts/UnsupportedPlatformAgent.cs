@@ -71,6 +71,11 @@ public class UnsupportedPlatformAgent : IronSourceIAgent
 		return null;
 	}
 
+	public void setManualLoadRewardedVideo(bool isOn)
+	{
+		Debug.Log("Unsupported Platform");
+	}
+
 	//******************* SDK Init *******************//
 
 	public void setUserId (string userId)
@@ -94,7 +99,13 @@ public class UnsupportedPlatformAgent : IronSourceIAgent
 	}
 
 	//******************* RewardedVideo API *******************//
-	
+
+	public void loadManualRewardedVideo()
+	{
+		Debug.Log("Unsupported Platform");
+	}
+
+
 	public void showRewardedVideo ()
 	{
 		Debug.Log ("Unsupported Platform");

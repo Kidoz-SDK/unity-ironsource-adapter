@@ -7,7 +7,7 @@ public class IronSource : IronSourceIAgent
 {
 	private IronSourceIAgent _platformAgent;
 	private static IronSource _instance;
-	private const string UNITY_PLUGIN_VERSION = "7.1.12.2-r";
+	private const string UNITY_PLUGIN_VERSION = "7.1.13-r";
 	private static bool isUnsupportedPlatform;
 
 	private IronSource()
@@ -108,6 +108,11 @@ public class IronSource : IronSourceIAgent
 		return _platformAgent.getConversionValue();
     }
 
+	public void setManualLoadRewardedVideo(bool isOn)
+	{
+		_platformAgent.setManualLoadRewardedVideo(isOn);
+	}
+
 	//******************* SDK Init *******************//
 
 	public void setUserId (string userId)
@@ -131,7 +136,12 @@ public class IronSource : IronSourceIAgent
 	}
 
 	//******************* RewardedVideo API *******************//
-	
+
+	public void loadManualRewardedVideo()
+	{
+		_platformAgent.loadManualRewardedVideo();
+	}
+
 	public void showRewardedVideo ()
 	{
 		_platformAgent.showRewardedVideo ();

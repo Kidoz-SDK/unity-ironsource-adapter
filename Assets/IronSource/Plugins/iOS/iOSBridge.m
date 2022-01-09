@@ -120,6 +120,15 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     [IronSource setMetaDataWithKey:key values:valuesArray];
 }
 
+- (void)setManualLoadRewardedVideo:(BOOL) isOn {
+    if(isOn) {
+        NSLog(@"Manual Load will be supported as of ironSource SDK 7.2.0 for iOS");
+    } else {
+        NSLog(@"Manual Load will be supported as of ironSource SDK 7.2.0 for iOS");
+    }
+}
+
+
 #pragma mark Init SDK
 
 - (void)setUserId:(NSString *)userId {
@@ -179,6 +188,12 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 - (void)clearRewardedVideoServerParameters {
     [IronSource clearRewardedVideoServerParameters];
+}
+
+#pragma mark Rewarded Video Manual Load API
+
+- (void)loadRewardedVideo {
+    NSLog(@"Manual Load will be supported as of ironSource SDK 7.2.0 for iOS");
 }
 
 #pragma mark Rewarded Video DemanOnly API
@@ -594,6 +609,11 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     UnitySendMessage(IRONSOURCE_EVENTS, "onBannerAdLeftApplication", "");
 }
 
+- (void)bannerDidShow {
+    
+}
+
+
 - (void)centerBanner {
     dispatch_async(dispatch_get_main_queue(), ^{
         @synchronized(self) {
@@ -816,6 +836,10 @@ extern "C" {
         }
     }
     
+    void CFSetManualLoadRewardedVideo(bool isOn) {
+         [[iOSBridge start] setManualLoadRewardedVideo:isOn];
+     }
+    
 #pragma mark Init SDK
     
     void CFInit(const char *appKey){
@@ -852,6 +876,11 @@ extern "C" {
     }
     
 #pragma mark RewardedVideo API
+    
+    void CFLoadRewardedVideo() {
+          [[iOSBridge start] loadRewardedVideo];
+      }
+    
     void CFShowRewardedVideo(){
         [[iOSBridge start] showRewardedVideo];
     }

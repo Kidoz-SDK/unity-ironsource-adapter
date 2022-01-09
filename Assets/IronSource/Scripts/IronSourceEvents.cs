@@ -206,6 +206,67 @@
                 _onRewardedVideoAvailabilityChangedEvent (isAvailable);
         }
 
+        // ******************************* RewardedVideo Manual Load Events *******************************
+
+        private static event Action<IronSourceError> _onRewardedVideoAdLoadFailedEvent;
+
+        public static event Action<IronSourceError> onRewardedVideoAdLoadFailedEvent
+        {
+            add
+            {
+                if (_onRewardedVideoAdLoadFailedEvent == null || !_onRewardedVideoAdLoadFailedEvent.GetInvocationList().Contains(value))
+                {
+                    _onRewardedVideoAdLoadFailedEvent += value;
+                }
+            }
+
+            remove
+            {
+                if (_onRewardedVideoAdLoadFailedEvent != null || _onRewardedVideoAdLoadFailedEvent.GetInvocationList().Contains(value))
+                {
+                    _onRewardedVideoAdLoadFailedEvent -= value;
+                }
+            }
+        }
+
+        public void onRewardedVideoAdLoadFailed(string description)
+        {
+            if (_onRewardedVideoAdLoadFailedEvent != null)
+            {
+                IronSourceError sse = getErrorFromErrorObject(description);
+                _onRewardedVideoAdLoadFailedEvent(sse);
+            }
+        }
+
+        private static event Action _onRewardedVideoAdReadyEvent;
+
+        public static event Action onRewardedVideoAdReadyEvent
+        {
+            add
+            {
+                if (_onRewardedVideoAdReadyEvent == null || !_onRewardedVideoAdReadyEvent.GetInvocationList().Contains(value))
+                {
+                    _onRewardedVideoAdReadyEvent += value;
+                }
+            }
+
+            remove
+            {
+                if (_onRewardedVideoAdReadyEvent != null || _onRewardedVideoAdReadyEvent.GetInvocationList().Contains(value))
+                {
+                    _onRewardedVideoAdReadyEvent -= value;
+                }
+            }
+        }
+
+        public void onRewardedVideoAdReady(string empty)
+        {
+            if (_onRewardedVideoAdReadyEvent != null)
+            {
+                _onRewardedVideoAdReadyEvent();
+            }
+        }
+
         // ******************************* RewardedVideo DemandOnly Events *******************************
 
         private static event Action<string> _onRewardedVideoAdLoadedDemandOnlyEvent;
