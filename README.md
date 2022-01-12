@@ -18,3 +18,6 @@ Kidoz Network ID on ironSource is `2b618dcd` and you will need to setup the netw
 
 Getting Started
 =================================
+
+- Download and import KidozISAdapter.unitypackage into your Unity project
+- Follow ironSource instructions for Unity plugin integration [HERE](https://developers.is.com/ironsource-mobile/unity/unity-plugin)
