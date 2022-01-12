@@ -8,6 +8,6 @@ You should only use this version or above as it is the first stable custom media
 This adapter offers support for the following ad types:
 
 + ironSource Interstitial Mediation 
-  + ironSource Rewarded Video Mediation for <U>Android</U>
+  + ironSource Rewarded Video Mediation for ##Android##
   
 Until ironSource mediation SDK supports Banner mediation for custom networks and Rewarded Videos mediation on the iOS platform, publishers who choose to do so can use Kidoz banners and Rewarded directly from Kidoz SDK.<BR>
