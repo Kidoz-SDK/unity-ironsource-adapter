@@ -21,3 +21,13 @@ Getting Started
 
 - Download and import KidozISAdapter.unitypackage into your Unity project
 - Follow ironSource instructions for Unity plugin integration [HERE](https://developers.is.com/ironsource-mobile/unity/unity-plugin)
+  
+IronSource Integration
+=================================
+  
+For built in Mediation Network Integration you should follow the instructions given on the ironSource Android SDK Integration page [HERE](https://developers.is.com/ironsource-mobile/unity/mediation-networks-unity) but as far as Kidoz integration goes you only need to do the following on your Scene:
+  
+For supporting for Rewarded Videos(currently only for Android) call:
+```c#
+  IronSource.Agent.setManualLoadRewardedVideo(true);
+```
