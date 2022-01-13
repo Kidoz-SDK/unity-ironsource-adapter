@@ -46,6 +46,8 @@ public class MainSceneScript : MonoBehaviour
         }
         IronSource.Agent.init(appKey);
 
+        // This is not neccesary if you don't call Kidoz Plugin Directly
+        // If you do - make sure to replace the testpublisherId and token with your own.
         Kidoz.init("5", "i0tnrdwdtq0dm36cqcpg6uyuwupkj76s");
         AddEvent("Initializing Kidoz SDK:: v" + sdk_version);
 
@@ -54,28 +56,16 @@ public class MainSceneScript : MonoBehaviour
     void OnEnable()
     {
 
-        //Add Rewarded Video Events
+        //Add ironSource Rewarded Video Events
         IronSourceEvents.onRewardedVideoAdReadyEvent += RewardedVideoAdReadyEvent;
         IronSourceEvents.onRewardedVideoAdLoadFailedEvent += RewardedVideoAdLoadFailedEvent;
         IronSourceEvents.onRewardedVideoAdShowFailedEvent += RewardedVideoAdShowFailedEvent;
-        //IronSourceEvents.onRewardedVideoAvailabilityChangedEvent += RewardedVideoAvailabilityChangedEvent;
-        //IronSourceEvents.onRewardedVideoAdStartedEvent += RewardedVideoAdStartedEvent;
-        //IronSourceEvents.onRewardedVideoAdEndedEvent += RewardedVideoAdEndedEvent;
         IronSourceEvents.onRewardedVideoAdRewardedEvent += RewardedVideoAdRewardedEvent;        
         IronSourceEvents.onRewardedVideoAdClickedEvent += RewardedVideoAdClickedEvent;
         IronSourceEvents.onRewardedVideoAdOpenedEvent += RewardedVideoAdOpenedEvent;
         IronSourceEvents.onRewardedVideoAdClosedEvent += RewardedVideoAdClosedEvent;
 
-        Kidoz.onRewardedDone += onRewarded;
-        Kidoz.onRewardedVideoStarted += onRewardedVideoStarted;
-        Kidoz.rewardedOpen += rewardedOpen;
-        Kidoz.rewardedClose += rewardedClose;
-        Kidoz.rewardedReady += rewardedReady;
-        Kidoz.rewardedOnLoadFail += rewardedOnLoadFail;
-        Kidoz.rewardedOnNoOffers += rewardedOnNoOffers;
-
-
-        // Add Interstitial Events
+        // Add ironSource Interstitial Events
         IronSourceEvents.onInterstitialAdReadyEvent += InterstitialAdReadyEvent;
         IronSourceEvents.onInterstitialAdLoadFailedEvent += InterstitialAdLoadFailedEvent;
         IronSourceEvents.onInterstitialAdShowSucceededEvent += InterstitialAdShowSucceededEvent;
@@ -85,18 +75,17 @@ public class MainSceneScript : MonoBehaviour
         IronSourceEvents.onInterstitialAdClosedEvent += InterstitialAdClosedEvent;
 
         // Add Kidoz SDK init Events
-
         Kidoz.initSuccess += onKidozInitSuccess;
         Kidoz.initError += onKidozInitError;
 
-        // Add ironSource Interstitial DemandOnly Events
-        //IronSourceEvents.onInterstitialAdReadyDemandOnlyEvent += InterstitialAdReadyDemandOnlyEvent;
-        //IronSourceEvents.onInterstitialAdLoadFailedDemandOnlyEvent += InterstitialAdLoadFailedDemandOnlyEvent;
-        //IronSourceEvents.onInterstitialAdShowFailedDemandOnlyEvent += InterstitialAdShowFailedDemandOnlyEvent;
-        //IronSourceEvents.onInterstitialAdClickedDemandOnlyEvent += InterstitialAdClickedDemandOnlyEvent;
-        //IronSourceEvents.onInterstitialAdOpenedDemandOnlyEvent += InterstitialAdOpenedDemandOnlyEvent;
-        //IronSourceEvents.onInterstitialAdClosedDemandOnlyEvent += InterstitialAdClosedDemandOnlyEvent;
-
+        // Add Kidoz Rewraded Video Events
+        Kidoz.onRewardedDone += onRewarded;
+        Kidoz.onRewardedVideoStarted += onRewardedVideoStarted;
+        Kidoz.rewardedOpen += rewardedOpen;
+        Kidoz.rewardedClose += rewardedClose;
+        Kidoz.rewardedReady += rewardedReady;
+        Kidoz.rewardedOnLoadFail += rewardedOnLoadFail;
+        Kidoz.rewardedOnNoOffers += rewardedOnNoOffers;
 
         // Add Kidoz Banner Events
         Kidoz.bannerReady += bannerReady;
@@ -275,37 +264,37 @@ public class MainSceneScript : MonoBehaviour
         AddEvent("Interstitial Ad Closed"); ;
     }
 
-    /************* Interstitial DemandOnly Delegates *************/
+    ///************* Interstitial DemandOnly Delegates *************/
 
-    void InterstitialAdReadyDemandOnlyEvent(string instanceId)
-    {
-        Debug.Log("unity-script: I got InterstitialAdReadyDemandOnlyEvent for instance: " + instanceId);
-    }
+    //void InterstitialAdReadyDemandOnlyEvent(string instanceId)
+    //{
+    //    Debug.Log("unity-script: I got InterstitialAdReadyDemandOnlyEvent for instance: " + instanceId);
+    //}
 
-    void InterstitialAdLoadFailedDemandOnlyEvent(string instanceId, IronSourceError error)
-    {
-        Debug.Log("unity-script: I got InterstitialAdLoadFailedDemandOnlyEvent for instance: " + instanceId + ", error code: " + error.getCode() + ",error description : " + error.getDescription());
-    }
+    //void InterstitialAdLoadFailedDemandOnlyEvent(string instanceId, IronSourceError error)
+    //{
+    //    Debug.Log("unity-script: I got InterstitialAdLoadFailedDemandOnlyEvent for instance: " + instanceId + ", error code: " + error.getCode() + ",error description : " + error.getDescription());
+    //}
 
-    void InterstitialAdShowFailedDemandOnlyEvent(string instanceId, IronSourceError error)
-    {
-        Debug.Log("unity-script: I got InterstitialAdShowFailedDemandOnlyEvent for instance: " + instanceId + ", error code :  " + error.getCode() + ",error description : " + error.getDescription());
-    }
+    //void InterstitialAdShowFailedDemandOnlyEvent(string instanceId, IronSourceError error)
+    //{
+    //    Debug.Log("unity-script: I got InterstitialAdShowFailedDemandOnlyEvent for instance: " + instanceId + ", error code :  " + error.getCode() + ",error description : " + error.getDescription());
+    //}
 
-    void InterstitialAdClickedDemandOnlyEvent(string instanceId)
-    {
-        Debug.Log("unity-script: I got InterstitialAdClickedDemandOnlyEvent for instance: " + instanceId);
-    }
+    //void InterstitialAdClickedDemandOnlyEvent(string instanceId)
+    //{
+    //    Debug.Log("unity-script: I got InterstitialAdClickedDemandOnlyEvent for instance: " + instanceId);
+    //}
 
-    void InterstitialAdOpenedDemandOnlyEvent(string instanceId)
-    {
-        Debug.Log("unity-script: I got InterstitialAdOpenedDemandOnlyEvent for instance: " + instanceId);
-    }
+    //void InterstitialAdOpenedDemandOnlyEvent(string instanceId)
+    //{
+    //    Debug.Log("unity-script: I got InterstitialAdOpenedDemandOnlyEvent for instance: " + instanceId);
+    //}
 
-    void InterstitialAdClosedDemandOnlyEvent(string instanceId)
-    {
-        Debug.Log("unity-script: I got InterstitialAdClosedDemandOnlyEvent for instance: " + instanceId);
-    }
+    //void InterstitialAdClosedDemandOnlyEvent(string instanceId)
+    //{
+    //    Debug.Log("unity-script: I got InterstitialAdClosedDemandOnlyEvent for instance: " + instanceId);
+    //}
 
     #endregion
 
