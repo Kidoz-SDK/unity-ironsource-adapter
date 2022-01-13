@@ -29,5 +29,9 @@ For built in Mediation Network Integration you should follow the instructions gi
   
 For supporting for Rewarded Videos(currently only for Android) call:
 ```c#
-  IronSource.Agent.setManualLoadRewardedVideo(true);
+IronSource.Agent.setManualLoadRewardedVideo(true);
+```
+and call the init method with your app's ironSource key:
+```c#  
+IronSource.Agent.init(appKey);
 ```
