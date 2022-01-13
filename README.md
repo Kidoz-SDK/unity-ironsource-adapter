@@ -35,4 +35,30 @@ and call the init method with your app's ironSource key:
 ```c#  
 IronSource.Agent.init(appKey);
 ```
-For further demonstration on how to load,show and handle lifecycle events for Interstitials and Rewarded Videos Ads check out our Main Scene sample code [HERE](https://github.com/Kidoz-SDK/unity-ironsource-adapter/blob/main/Assets/DemoScene/MainSceneScript.cs)
+For further demonstration on how to load,show and handle lifecycle events for Interstitials and Rewarded Videos Ads check out our Main Scene sample code [HERE](https://github.com/Kidoz-SDK/unity-ironsource-adapter/blob/main/Assets/DemoScene/MainSceneScript.cs).
+  
+Kidoz Direct
+=================================
+  
+The ironSource Custom Network Mediation integration currently supports only Interstitials and Rewarded Videos(Android only).<BR>
+There is however a way to load and display Banners and Rewarded Videos calling the Kidoz Unity Plugin directly.
+  
+Kidoz SDK initialization:
+  
+```c#
+// Add Kidoz SDK init Events
+
+Kidoz.initSuccess += onKidozInitSuccess;
+Kidoz.initError += onKidozInitError;  
+  
+// Call Kidoz SDK init
+  
+Kidoz.init(`Publisher ID`, `Token`);
+```
+  
+Make sure the `Publisher ID` and `Token` you send on the `KidozSDK.initialize(...)` method are your own unique parameters and not the Kidoz Test parameters used in this sample. This parameters need to be the same ones you used as network level parameters when adding the Kidoz network on the ironSource dashboard.<BR>
+
+See the sample code for example as how to init, load and show Kidoz Banners and receive lifecycle callbacks.
+  
+  
+
