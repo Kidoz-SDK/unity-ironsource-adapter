@@ -1,14 +1,14 @@
 # Unity ironSource Adapter + Sample App
 
-The Kidoz Unity ironSource Adapter SDK is built and tested with ironSource mediation v7.1.13.<BR>
-You should only use this version or above as it is the first stable custom mediation release. <BR>
+The Kidoz Unity ironSource Adapter SDK is built and tested with ironSource mediation v7.1.13 and **currently support only Android**.<BR>
+You should only use this version or above as it is the first stable custom mediation release.<BR>
 
 This adapter offers support for the following ad types:
 
 + ironSource Interstitial Mediation 
 + ironSource Rewarded Video Mediation for **Android**
   
-Until ironSource mediation SDK supports Banner mediation for custom networks and Rewarded Videos mediation on the iOS platform, publishers who choose to do so can use Kidoz banners and Rewarded directly from Kidoz SDK.<BR>
+Until ironSource mediation SDK supports Banner mediation for custom networks, publishers who choose to do so can use Kidoz banners directly from Kidoz SDK.<BR>
   
 Before publishing your first app please finish the onboarding process for Kidoz's publishers [HERE](http://accounts.kidoz.net/publishers/register?utm_source=&utm_content=&utm_campaign=&utm_medium=)  
 and follow the instructions for ironSource Custom Adapter setup [HERE](https://developers.is.com/ironsource-mobile/general/custom-adapter-setup/).<BR><BR>
@@ -27,11 +27,11 @@ IronSource Integration
   
 For built in Mediation Network Integration you should follow the instructions given on the ironSource Android SDK Integration page [HERE](https://developers.is.com/ironsource-mobile/unity/mediation-networks-unity) but as far as Kidoz integration goes you only need to do the following on your Scene:
   
-For supporting the Rewarded Videos(currently only for Android) call:
+For supporting the Rewarded Videos invoke:
 ```c#
 IronSource.Agent.setManualLoadRewardedVideo(true);
 ```
-and call the init method with your app's ironSource key:
+and invoke the init method with your app's ironSource key:
 ```c#  
 IronSource.Agent.init(appKey);
 ```
@@ -58,7 +58,7 @@ Kidoz.init(`Publisher ID`, `Token`);
   
 Make sure the `Publisher ID` and `Token` you send on the `KidozSDK.init(...)` method are your own unique parameters and not the Kidoz Test parameters used in this sample. This parameters need to be the same ones you used as network level parameters when adding the Kidoz network on the ironSource dashboard.<BR>
 
-See the sample code for example as how to init, load and show Kidoz Banners and Rewarded Videos and receive their lifecycle callbacks [HERE](https://github.com/Kidoz-SDK/unity-ironsource-adapter/blob/main/Assets/DemoScene/MainSceneScript.cs).
+See the sample code for example as how to init, load and show Kidoz Banners and receive their lifecycle callbacks [HERE](https://github.com/Kidoz-SDK/unity-ironsource-adapter/blob/main/Assets/DemoScene/MainSceneScript.cs).
   
   
 
