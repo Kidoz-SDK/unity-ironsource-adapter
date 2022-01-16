@@ -40,7 +40,7 @@ For further demonstration on how to load,show and handle lifecycle events for In
 Kidoz Direct
 =================================
   
-The ironSource Custom Network Mediation integration currently supports only Interstitials and Rewarded Videos(Android only).<BR>
+The ironSource Custom Network Mediation integration currently supports only Interstitials and Rewarded Videos.<BR>
 There is however a way to load and display Banners and Rewarded Videos calling the Kidoz Unity Plugin directly.
   
 Kidoz SDK initialization:
