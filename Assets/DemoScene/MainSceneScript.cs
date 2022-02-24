@@ -18,11 +18,9 @@ public class MainSceneScript : MonoBehaviour
 #if UNITY_ANDROID
         string appKey = "11cfc977d";
         string sdk_version = "8.9.5";
-        bool rewradedSupported = true;
 #elif UNITY_IPHONE
         string appKey = "11ec9bd9d";
         string sdk_version = "8.9.1";
-        bool rewradedSupported = false;
 #else
     string appKey = "unexpected_platform";
     string sdk_version = "unexpected_platform";
@@ -39,15 +37,12 @@ public class MainSceneScript : MonoBehaviour
         Debug.Log("unity-script: unity version" + IronSource.unityVersion());
 
         // SDK init
-        Debug.Log("unity-script: IronSource.Agent.init");
-        if (rewradedSupported)
-        {
-            IronSource.Agent.setManualLoadRewardedVideo(true);
-        }
+        Debug.Log("unity-script: IronSource.Agent.init");      
+        IronSource.Agent.setManualLoadRewardedVideo(true);        
         IronSource.Agent.init(appKey);
 
         // This is not neccesary if you don't call Kidoz Plugin Directly
-        // If you do - make sure to replace the testpublisherId and token with your own.
+        // If you do - make sure to replace the test publisherId and token with your own.
         Kidoz.init("5", "i0tnrdwdtq0dm36cqcpg6uyuwupkj76s");
         AddEvent("Initializing Kidoz SDK:: v" + sdk_version);
 
@@ -141,34 +136,33 @@ public class MainSceneScript : MonoBehaviour
             }
         }
 
-        if (rewradedSupported)
+       
+
+        lineHeight = lineHeight + 0.10f;
+        Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+        if (GUI.Button(loadRewardedButton, "Load Rewarded"))
         {
+            Debug.Log("unity-script: LoadRewardedButtonClicked");
+            IronSource.Agent.loadManualRewardedVideo();
+            AddEvent("Loading Rewarded");
+        }
 
-            lineHeight = lineHeight + 0.10f;
-            Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(loadRewardedButton, "Load Rewarded"))
+        Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+        if (GUI.Button(showRewardedButton, "Show Rewarded"))
+        {
+            Debug.Log("unity-script: ShowRewardedButtonClicked");
+            if (IronSource.Agent.isRewardedVideoAvailable())
             {
-                Debug.Log("unity-script: LoadRewardedButtonClicked");
-                IronSource.Agent.loadManualRewardedVideo();
-                AddEvent("Loading Rewarded");
+                IronSource.Agent.showRewardedVideo();
+                AddEvent("Show Rewarded");
             }
-
-            Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(showRewardedButton, "Show Rewarded"))
+            else
             {
-                Debug.Log("unity-script: ShowRewardedButtonClicked");
-                if (IronSource.Agent.isRewardedVideoAvailable())
-                {
-                    IronSource.Agent.showRewardedVideo();
-                    AddEvent("Show Rewarded");
-                }
-                else
-                {
-                    Debug.Log("unity-script: IronSource.Agent.isInterstitialReady - False");
-                    AddEvent("Show Interstitial - Not Ready");
-                }
+                Debug.Log("unity-script: IronSource.Agent.isInterstitialReady - False");
+                AddEvent("Show Rewarded - Not Ready");
             }
         }
+        
 
 #endregion
 
@@ -176,24 +170,7 @@ public class MainSceneScript : MonoBehaviour
         lineHeight = lineHeight + 0.10f;
         Rect labelRect_ = new Rect(0.05f * Screen.width, lineHeight * Screen.height, Screen.width, 0.08f * Screen.height);
         GUI.Label(labelRect_, "Kidoz Direct v" + sdk_version, labelStyle);
-        lineHeight = lineHeight + 0.05f;
-        if (!rewradedSupported)
-        {
-            Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(loadRewardedButton, "Load Rewarded"))
-            {
-                Kidoz.loadRewardedAd(false);
-                AddEvent("Loading Rewarded");
-            }
-
-            Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(showRewardedButton, "Show Rewarded"))
-            {
-                Kidoz.showRewarded();
-                AddEvent("Show Rewarded");
-            }
-            lineHeight = lineHeight + 0.10f;
-        }
+        lineHeight = lineHeight + 0.05f;        
         Rect loadBannerButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
         if (GUI.Button(loadBannerButton, "Load Banner"))
         {
