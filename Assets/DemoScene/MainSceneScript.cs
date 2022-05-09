@@ -17,7 +17,7 @@ public class MainSceneScript : MonoBehaviour
 
 #if UNITY_ANDROID
         string appKey = "11cfc977d";
-        string sdk_version = "8.9.5";
+        string sdk_version = "8.9.7";
         bool rewradedSupported = true;
 #elif UNITY_IPHONE
         string appKey = "11ec9bd9d";
