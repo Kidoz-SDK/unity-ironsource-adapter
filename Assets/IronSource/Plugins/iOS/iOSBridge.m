@@ -33,6 +33,7 @@ extern "C" {
     ISBannerView* _bannerView;
     NSInteger _position;
     UIViewController* _bannerViewController;
+    BOOL _shouldHideBanner;
 }
 
 @end
@@ -66,6 +67,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         _bannerView = nil;
         _bannerViewController = nil;
         _position = BANNER_POSITION_BOTTOM;
+        _shouldHideBanner = NO;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:)
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -121,13 +123,32 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 - (void)setManualLoadRewardedVideo:(BOOL) isOn {
-    if(isOn) {
-        NSLog(@"Manual Load will be supported as of ironSource SDK 7.2.0 for iOS");
-    } else {
-        NSLog(@"Manual Load will be supported as of ironSource SDK 7.2.0 for iOS");
+    if (isOn) {
+        [IronSource setRewardedVideoManualDelegate:self];
+    }
+    else {
+        [IronSource setRewardedVideoManualDelegate:nil];
     }
 }
 
+- (void)setNetworkData:(NSString *)networkKey data:(NSString *)networkData {
+    NSError* error;
+    if (!networkData) {
+        return;
+    }
+    
+    NSData *data = [networkData dataUsingEncoding:NSUTF8StringEncoding];
+    if (!data) {
+        return;
+    }
+    
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+    if (!dict) {
+        return;
+    }
+    
+    [IronSource setNetworkDataWithNetworkKey:networkKey andNetworkData:dict];
+}
 
 #pragma mark Init SDK
 
@@ -136,11 +157,11 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 - (void)initWithAppKey:(NSString *)appKey {
-    [IronSource initWithAppKey:appKey];
+    [IronSource initWithAppKey:appKey delegate:self];
 }
 
 - (void)initWithAppKey:(NSString *)appKey adUnits:(NSArray<NSString *> *)adUnits {
-    [IronSource initWithAppKey:appKey adUnits:adUnits];
+    [IronSource initWithAppKey:appKey adUnits:adUnits delegate:self];
 }
 
 - (void)initISDemandOnly:(NSString *)appKey adUnits:(NSArray<NSString *> *)adUnits {
@@ -193,7 +214,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 #pragma mark Rewarded Video Manual Load API
 
 - (void)loadRewardedVideo {
-    NSLog(@"Manual Load will be supported as of ironSource SDK 7.2.0 for iOS");
+    [IronSource loadRewardedVideo];
 }
 
 #pragma mark Rewarded Video DemanOnly API
@@ -208,6 +229,12 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 - (BOOL)isDemandOnlyRewardedVideoAvailable:(NSString *)instanceId {
     return [IronSource hasISDemandOnlyRewardedVideo:instanceId];
+}
+
+#pragma mark Init Delegate
+
+- (void)initializationDidComplete {
+    UnitySendMessage(IRONSOURCE_EVENTS, "onSdkInitializationCompleted", "");
 }
 
 #pragma mark Rewarded Video Delegate
@@ -488,11 +515,12 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 #pragma mark Banner API
 
-- (void)loadBanner:(NSString *)description width:(NSInteger)width height:(NSInteger)height position:(NSInteger)position placement:(NSString *)placement {
+- (void)loadBanner:(NSString *)description width:(NSInteger)width height:(NSInteger)height position:(NSInteger)position placement:(NSString *)placement adaptive:(bool) isAdaptive {
     @synchronized(self) {
         _position = position;
         ISBannerSize* size = [self getBannerSize:description width:width height:height];
-        
+        size.adaptive = isAdaptive;
+
         _bannerViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
         [IronSource loadBannerWithViewController:_bannerViewController size:size placement:placement];
     }
@@ -505,26 +533,29 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
                 [IronSource destroyBanner:_bannerView];
                 _bannerView = nil;
                 _bannerViewController = nil;
+                _shouldHideBanner = NO;
             }
         }
     });
 }
 
 - (void)displayBanner {
+    _shouldHideBanner = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         @synchronized(self) {
             if (_bannerView != nil) {
-                [_bannerView setHidden:NO];
+                [_bannerView setHidden:_shouldHideBanner];
             }
         }
     });
 }
 
 - (void)hideBanner {
+    _shouldHideBanner = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
         @synchronized(self) {
             if (_bannerView != nil) {
-                [_bannerView setHidden:YES];
+                [_bannerView setHidden:_shouldHideBanner];
             }
         }
     });
@@ -577,6 +608,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         @synchronized(self) {
             _bannerView = bannerView;
             [_bannerView setAccessibilityLabel:@"bannerContainer"];
+            [_bannerView setHidden:_shouldHideBanner];
             
             _bannerView.center = [self getBannerCenter:_position rootView:_bannerViewController.view];
             [_bannerViewController.view addSubview:_bannerView];
@@ -607,10 +639,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 - (void)bannerWillLeaveApplication {
     UnitySendMessage(IRONSOURCE_EVENTS, "onBannerAdLeftApplication", "");
-}
-
-- (void)bannerDidShow {
-    
 }
 
 
@@ -838,7 +866,11 @@ extern "C" {
     
     void CFSetManualLoadRewardedVideo(bool isOn) {
          [[iOSBridge start] setManualLoadRewardedVideo:isOn];
-     }
+    }
+    
+    void CFSetNetworkData (char *networkKey, char *networkData) {
+        [[iOSBridge start] setNetworkData:GetStringParam(networkKey) data:GetStringParam(networkData)];
+    }
     
 #pragma mark Init SDK
     
@@ -988,8 +1020,8 @@ extern "C" {
     
 #pragma mark Banner API
     
-    void CFLoadBanner(char* description, int width, int height, int position, char* placementName){
-        [[iOSBridge start] loadBanner:GetStringParam(description) width:width height:height position:position placement:GetStringParam(placementName)];
+    void CFLoadBanner(char* description, int width, int height, int position, char* placementName, bool isAdaptive){
+        [[iOSBridge start] loadBanner:GetStringParam(description) width:width height:height position:position placement:GetStringParam(placementName) adaptive:isAdaptive];
     }
     
     void CFDestroyBanner (){
@@ -1038,6 +1070,23 @@ extern "C" {
         }
       return [[iOSBridge start] setAdRevenueData:GetStringParam(datasource)impressionData:data];
     }
+
+
+#pragma mark - ISRewardedVideoManualDelegate methods
+
+
+- (void)rewardedVideoDidLoad {
+    UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdReady", "");
+}
+
+- (void)rewardedVideoDidFailToLoadWithError:(NSError *)error {
+    if (error)
+        UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdLoadFailed", MakeStringCopy([self parseErrorToEvent:error]));
+    else
+        UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdLoadFailed","");
+
+}
+
     
 #ifdef __cplusplus
 }
