@@ -12,7 +12,7 @@ namespace KIDOZiOSInterface {
 			SDK_INIT_SUCCESS, SDK_INIT_ERROR,
 			INTERSTITIAL_READY,INTERSTITIAL_OPENED,INTERSTITIAL_CLOSED,INTERSTITIAL_NO_OFFERS,INTERSTITIAL_LOAD_FAILED,
 			REWARDED_READY,REWARDED_OPENED,REWARDED_CLOSED,REWARDED_NO_OFFERS,REWARDED_LOAD_FAILED,REWARDED_VIDEO_STARTED,REWARDED_DONE,
-			BANNER_READY,BANNER_CLOSED,BANNER_ERROR,BANNER_NO_OFFERS
+			BANNER_READY,BANNER_CLOSED,BANNER_LOAD_ERROR,BANNER_SHOW_ERROR,BANNER_NO_OFFERS
 		};
 		
 		[DllImport("__Internal")]
@@ -126,12 +126,16 @@ namespace KIDOZiOSInterface {
 				KidozSDK.Kidoz.Instance.bannerCloseCallBack("");
 				break;
 				
-			case KidozSDKEvents.BANNER_ERROR:
-				KidozSDK.Kidoz.Instance.bannerErrorCallBack("");
+			case KidozSDKEvents.BANNER_LOAD_ERROR:
+				KidozSDK.Kidoz.Instance.bannerLoadErrorCallBack("");
 				break;
 				
 			case KidozSDKEvents.BANNER_NO_OFFERS:
 				KidozSDK.Kidoz.Instance.bannerNoOffersCallBack("");
+				break;
+
+			case KidozSDKEvents.BANNER_SHOW_ERROR:
+				KidozSDK.Kidoz.Instance.bannerShowErrorCallBack("");
 				break;
 				
 			}
