@@ -18,11 +18,9 @@ public class MainSceneScript : MonoBehaviour
 #if UNITY_ANDROID
         string appKey = "11cfc977d";
         string sdk_version = "8.9.7";
-        bool rewradedSupported = true;
 #elif UNITY_IPHONE
         string appKey = "11ec9bd9d";
         string sdk_version = "8.9.1";
-        bool rewradedSupported = false;
 #else
     string appKey = "unexpected_platform";
     string sdk_version = "unexpected_platform";
@@ -39,11 +37,8 @@ public class MainSceneScript : MonoBehaviour
         Debug.Log("unity-script: unity version" + IronSource.unityVersion());
 
         // SDK init
-        Debug.Log("unity-script: IronSource.Agent.init");
-        if (rewradedSupported)
-        {
-            IronSource.Agent.setManualLoadRewardedVideo(true);
-        }
+        Debug.Log("unity-script: IronSource.Agent.init");        
+        IronSource.Agent.setManualLoadRewardedVideo(true);       
         IronSource.Agent.init(appKey);
 
         // This is not neccesary if you don't call Kidoz Plugin Directly
@@ -90,7 +85,8 @@ public class MainSceneScript : MonoBehaviour
         // Add Kidoz Banner Events
         Kidoz.bannerReady += bannerReady;
         Kidoz.bannerClose += bannerClose;
-        Kidoz.bannerError += bannerError;
+        Kidoz.bannerLoadError += bannerLoadError;
+        Kidoz.bannerShowError += bannerShowError;
         Kidoz.bannerNoOffers += bannerNoOffers;
     }
 
@@ -141,59 +137,41 @@ public class MainSceneScript : MonoBehaviour
             }
         }
 
-        if (rewradedSupported)
+
+
+        lineHeight = lineHeight + 0.10f;
+        Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+        if (GUI.Button(loadRewardedButton, "Load Rewarded"))
         {
+            Debug.Log("unity-script: LoadRewardedButtonClicked");
+            IronSource.Agent.loadManualRewardedVideo();
+            AddEvent("Loading Rewarded");
+        }
 
-            lineHeight = lineHeight + 0.10f;
-            Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(loadRewardedButton, "Load Rewarded"))
+        Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
+        if (GUI.Button(showRewardedButton, "Show Rewarded"))
+        {
+            Debug.Log("unity-script: ShowRewardedButtonClicked");
+            if (IronSource.Agent.isRewardedVideoAvailable())
             {
-                Debug.Log("unity-script: LoadRewardedButtonClicked");
-                IronSource.Agent.loadManualRewardedVideo();
-                AddEvent("Loading Rewarded");
+                IronSource.Agent.showRewardedVideo();
+                AddEvent("Show Rewarded");
             }
-
-            Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(showRewardedButton, "Show Rewarded"))
+            else
             {
-                Debug.Log("unity-script: ShowRewardedButtonClicked");
-                if (IronSource.Agent.isRewardedVideoAvailable())
-                {
-                    IronSource.Agent.showRewardedVideo();
-                    AddEvent("Show Rewarded");
-                }
-                else
-                {
-                    Debug.Log("unity-script: IronSource.Agent.isInterstitialReady - False");
-                    AddEvent("Show Interstitial - Not Ready");
-                }
+                Debug.Log("unity-script: IronSource.Agent.isInterstitialReady - False");
+                AddEvent("Show Rewarded - Not Ready");
             }
         }
 
-#endregion
 
-#region Kidoz Direct
+        #endregion
+
+        #region Kidoz Direct
         lineHeight = lineHeight + 0.10f;
         Rect labelRect_ = new Rect(0.05f * Screen.width, lineHeight * Screen.height, Screen.width, 0.08f * Screen.height);
         GUI.Label(labelRect_, "Kidoz Direct v" + sdk_version, labelStyle);
         lineHeight = lineHeight + 0.05f;
-        if (!rewradedSupported)
-        {
-            Rect loadRewardedButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(loadRewardedButton, "Load Rewarded"))
-            {
-                Kidoz.loadRewardedAd(false);
-                AddEvent("Loading Rewarded");
-            }
-
-            Rect showRewardedButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-            if (GUI.Button(showRewardedButton, "Show Rewarded"))
-            {
-                Kidoz.showRewarded();
-                AddEvent("Show Rewarded");
-            }
-            lineHeight = lineHeight + 0.10f;
-        }
         Rect loadBannerButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
         if (GUI.Button(loadBannerButton, "Load Banner"))
         {
@@ -207,7 +185,7 @@ public class MainSceneScript : MonoBehaviour
             Kidoz.hideBanner();
         }
 
-#endregion
+        #endregion
 
         GUIStyle guiStyle = new GUIStyle();
         guiStyle.fontSize = (int)(0.025f * Screen.width);
@@ -220,7 +198,8 @@ public class MainSceneScript : MonoBehaviour
 
 
 
-#region IronSource Interstitial callback handlers
+
+    #region IronSource Interstitial callback handlers
 
     void InterstitialAdReadyEvent()
     {
@@ -432,11 +411,18 @@ public class MainSceneScript : MonoBehaviour
         AddEvent("Banner Hide");
     }
 
-    private void bannerError(string value)
+    private void bannerLoadError(string value)
     {
-        print("SampleCode | bannerError: " + value);
-        Kidoz.printToastMessage("SampleCode | bannerError: " + value);
-        AddEvent("Banner Error:: " + value);
+        print("SampleCode | bannerLoadError: " + value);
+        Kidoz.printToastMessage("SampleCode | bannerLoadError: " + value);
+        AddEvent("Banner Load Error:: " + value);
+    }
+
+    private void bannerShowError(string value)
+    {
+        print("SampleCode | bannerShowError: " + value);
+        Kidoz.printToastMessage("SampleCode | bannerShowError: " + value);
+        AddEvent("Banner Show Error:: " + value);
     }
 
     private void bannerNoOffers(string value)
