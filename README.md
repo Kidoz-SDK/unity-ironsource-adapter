@@ -1,7 +1,7 @@
 # Unity ironSource Adapter + Sample App
 
-The Kidoz Unity ironSource Adapter SDK is built and tested with ironSource mediation v7.1.13 <BR>and <ins>**currently supports Android only**</ins>.<BR>
-You should only use version 7.1.13 or above as it is the first stable custom mediation release.<BR>
+The Kidoz Unity ironSource Adapter SDK is built and tested with ironSource mediation v7.2.1.2 <BR>and <ins>**currently supports Android only**</ins>.<BR>
+You should only use version 7.2.0.0 or above as it is the first stable custom mediation release with both Interstital and Rewarded support.<BR>
 
 This adapter offers support for the following ad types:
 
