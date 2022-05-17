@@ -20,32 +20,6 @@ namespace KIDOZAndroidInterface {
 
 		}
 
-		public void setupCallbacks () {
-
-			Debug.Log ("Init android interface:");
-			///get activity
-			using (AndroidJavaClass activityClass = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
-				activityContext = activityClass.GetStatic<AndroidJavaObject> ("currentActivity");
-			}
-
-			string kidoz_name = KidozSDK.Kidoz.Instance.gameObject.name;
-
-			//init Kidoz
-			using (var kidozBridgeClass = new AndroidJavaClass ("com.kidoz.sdk.api.platforms.KidozUnityBridge")) {
-
-				kidozBridgeObject = kidozBridgeClass.CallStatic<AndroidJavaObject> ("getInstance", activityContext);
-
-				kidozBridgeObject.Call ("setMainSDKEventListeners", kidoz_name, "initSuccessCallback", "initErrorCallback");
-
-				kidozBridgeObject.Call ("setInterstitialEventListener", kidoz_name, "interstitialOpenCallBack", "interstitialCloseCallBack", "interstitialReadyCallBack", "interstitialOnLoadFailCallBack", "interstitialOnNoOffersCallBack");
-
-				kidozBridgeObject.Call ("setRewardedVideoEventListener", kidoz_name, "onRewardedCallBack", "onRewardedVideoStartedCallBack", "rewardedOpenCallBack", "rewardedCloseCallBack", "rewardedReadyCallBack", "rewardedOnLoadFailCallBack", "rewardedOnNoOffersCallBack");
-
-				kidozBridgeObject.Call ("setBannerEventListener", kidoz_name, "bannerReadyCallBack", "bannerCloseCallBack", "bannerErrorCallBack", "bannerNoOffersCallBack");
-
-
-			}
-		}
 
 		public void init(string developerID, string securityToken)
 		{
@@ -72,7 +46,7 @@ namespace KIDOZAndroidInterface {
 
 				kidozBridgeObject.Call ("setRewardedVideoEventListener", kidoz_name, "onRewardedCallBack", "onRewardedVideoStartedCallBack", "rewardedOpenCallBack", "rewardedCloseCallBack", "rewardedReadyCallBack", "rewardedOnLoadFailCallBack", "rewardedOnNoOffersCallBack");
 
-				kidozBridgeObject.Call ("setBannerEventListener", kidoz_name, "bannerReadyCallBack", "bannerCloseCallBack", "bannerErrorCallBack", "bannerNoOffersCallBack");
+				kidozBridgeObject.Call ("setBannerEventListener", kidoz_name, "bannerReadyCallBack", "bannerCloseCallBack", "bannerLoadErrorCallBack", "bannerNoOffersCallBack");
 
 
 			}

@@ -15,8 +15,6 @@ namespace KIDOZNativeInterface {
 
 		void hideBanner();
 
-		void setupCallbacks ();
-
 	
 		//***********************************//
 		//***** INTERSTITIAL & REWARDED *****//

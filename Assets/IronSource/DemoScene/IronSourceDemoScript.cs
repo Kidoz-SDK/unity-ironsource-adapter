@@ -37,6 +37,9 @@ public class IronSourceDemoScript : MonoBehaviour
     void OnEnable()
     {
 
+        //Add Init Event
+        IronSourceEvents.onSdkInitializationCompletedEvent += SdkInitializationCompletedEvent;
+        
         //Add Rewarded Video Events
         IronSourceEvents.onRewardedVideoAdOpenedEvent += RewardedVideoAdOpenedEvent;
         IronSourceEvents.onRewardedVideoAdClosedEvent += RewardedVideoAdClosedEvent;
@@ -94,6 +97,8 @@ public class IronSourceDemoScript : MonoBehaviour
 
         //Add ImpressionSuccess Event
         IronSourceEvents.onImpressionSuccessEvent += ImpressionSuccessEvent;
+        IronSourceEvents.onImpressionDataReadyEvent += ImpressionDataReadyEvent;
+
     }
 
     void OnApplicationPause(bool isPaused)
@@ -181,6 +186,14 @@ public class IronSourceDemoScript : MonoBehaviour
 
     }
     
+    #region Init callback handlers
+
+    void SdkInitializationCompletedEvent()
+    {
+        Debug.Log("unity-script: I got SdkInitializationCompletedEvent");
+    }
+
+    #endregion
 
     #region RewardedAd callback handlers
 
@@ -420,6 +433,12 @@ public class IronSourceDemoScript : MonoBehaviour
     {
         Debug.Log("unity - script: I got ImpressionSuccessEvent ToString(): " + impressionData.ToString());
         Debug.Log("unity - script: I got ImpressionSuccessEvent allData: " + impressionData.allData);
+    }
+
+    void ImpressionDataReadyEvent(IronSourceImpressionData impressionData)
+    {
+        Debug.Log("unity - script: I got ImpressionDataReadyEvent ToString(): " + impressionData.ToString());
+        Debug.Log("unity - script: I got ImpressionDataReadyEvent allData: " + impressionData.allData);
     }
 
     #endregion
