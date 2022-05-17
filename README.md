@@ -60,5 +60,13 @@ Make sure the `Publisher ID` and `Token` you send on the `KidozSDK.init(...)` me
 
 See the sample code for example as how to init, load and show Kidoz Banners and receive their lifecycle callbacks [HERE](https://github.com/Kidoz-SDK/unity-ironsource-adapter/blob/main/Assets/DemoScene/MainSceneScript.cs).
   
-  
+# iOS SKAdNetwork Support
+
+In order to support CPI attribution on iOS, please make sure to include the Kidoz ad network ID in your app property list file (Info.plist):
+
+```java
+v79kvwwj4g.skadnetwork	
+```
+	
+For more information, see [Configuring ad network IDs on Unity](https://docs.unity.com/ads/ConfiguringAdNetworkIDs.html) and  [Configuring a Source App for SKAdNetwork](https://developer.apple.com/documentation/storekit/skadnetwork/configuring_a_source_app).
 
