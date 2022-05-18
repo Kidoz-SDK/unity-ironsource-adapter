@@ -20,7 +20,7 @@ Getting Started
 =================================
 
 - Download and import [KidozISAdapter.unitypackage](https://github.com/Kidoz-SDK/unity-ironsource-adapter/blob/main/KidozISAdapter.unitypackage) into your Unity project
-- Follow ironSource instructions for Unity plugin integration [HERE](https://developers.is.com/ironsource-mobile/unity/unity-plugin)
+- Follow ironSource instructions for Unity plugin integration [HERE](https://developers.is.com/ironsource-mobile/unity/unity-plugin).
   
 IronSource Integration
 =================================
