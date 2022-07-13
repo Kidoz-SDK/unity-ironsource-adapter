@@ -26,7 +26,7 @@ IronSource Integration
   
 For built in Mediation Network Integration you should follow the instructions given on the ironSource Android SDK Integration page [HERE](https://developers.is.com/ironsource-mobile/unity/mediation-networks-unity) but as far as Kidoz integration goes you only need to do the following on your Scene:
   
-For supporting the Rewarded Videos invoke:
+For supporting manual Rewarded Videos loading invoke:
 ```c#
 IronSource.Agent.setManualLoadRewardedVideo(true);
 ```
