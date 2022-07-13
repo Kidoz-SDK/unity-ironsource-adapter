@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-using KidozSDK;
-
-
-
 // Example for IronSource Unity.
 public class MainSceneScript : MonoBehaviour
 {
@@ -20,7 +16,7 @@ public class MainSceneScript : MonoBehaviour
         string sdk_version = "8.9.7";
 #elif UNITY_IPHONE
         string appKey = "11ec9bd9d";
-        string sdk_version = "8.9.1";
+        string sdk_version = "8.9.3";
 #else
     string appKey = "unexpected_platform";
     string sdk_version = "unexpected_platform";
@@ -41,11 +37,6 @@ public class MainSceneScript : MonoBehaviour
         IronSource.Agent.setManualLoadRewardedVideo(true);       
         IronSource.Agent.init(appKey);
 
-        // This is not neccesary if you don't call Kidoz Plugin Directly
-        // If you do - make sure to replace the testpublisherId and token with your own.
-        Kidoz.init("5", "i0tnrdwdtq0dm36cqcpg6uyuwupkj76s");
-        AddEvent("Initializing Kidoz SDK:: v" + sdk_version);
-
     }
 
     void OnEnable()
@@ -60,6 +51,8 @@ public class MainSceneScript : MonoBehaviour
         IronSourceEvents.onRewardedVideoAdOpenedEvent += RewardedVideoAdOpenedEvent;
         IronSourceEvents.onRewardedVideoAdClosedEvent += RewardedVideoAdClosedEvent;
 
+        IronSourceEvents.onRewardedVideoAvailabilityChangedEvent += RewardedVideoAvailabilityChangedEvent;
+        //IronSourceRewardedVideoEvents.onAdAvailableEvent += ReardedVideoOnAdAvailable;
         // Add ironSource Interstitial Events
         IronSourceEvents.onInterstitialAdReadyEvent += InterstitialAdReadyEvent;
         IronSourceEvents.onInterstitialAdLoadFailedEvent += InterstitialAdLoadFailedEvent;
@@ -69,25 +62,6 @@ public class MainSceneScript : MonoBehaviour
         IronSourceEvents.onInterstitialAdOpenedEvent += InterstitialAdOpenedEvent;
         IronSourceEvents.onInterstitialAdClosedEvent += InterstitialAdClosedEvent;
 
-        // Add Kidoz SDK init Events
-        Kidoz.initSuccess += onKidozInitSuccess;
-        Kidoz.initError += onKidozInitError;
-
-        // Add Kidoz Rewraded Video Events
-        Kidoz.onRewardedDone += onRewarded;
-        Kidoz.onRewardedVideoStarted += onRewardedVideoStarted;
-        Kidoz.rewardedOpen += rewardedOpen;
-        Kidoz.rewardedClose += rewardedClose;
-        Kidoz.rewardedReady += rewardedReady;
-        Kidoz.rewardedOnLoadFail += rewardedOnLoadFail;
-        Kidoz.rewardedOnNoOffers += rewardedOnNoOffers;
-
-        // Add Kidoz Banner Events
-        Kidoz.bannerReady += bannerReady;
-        Kidoz.bannerClose += bannerClose;
-        Kidoz.bannerLoadError += bannerLoadError;
-        Kidoz.bannerShowError += bannerShowError;
-        Kidoz.bannerNoOffers += bannerNoOffers;
     }
 
     void OnApplicationPause(bool isPaused)
@@ -164,26 +138,6 @@ public class MainSceneScript : MonoBehaviour
             }
         }
 
-
-        #endregion
-
-        #region Kidoz Direct
-        lineHeight = lineHeight + 0.10f;
-        Rect labelRect_ = new Rect(0.05f * Screen.width, lineHeight * Screen.height, Screen.width, 0.08f * Screen.height);
-        GUI.Label(labelRect_, "Kidoz Direct v" + sdk_version, labelStyle);
-        lineHeight = lineHeight + 0.05f;
-        Rect loadBannerButton = new Rect(0.10f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-        if (GUI.Button(loadBannerButton, "Load Banner"))
-        {
-            Kidoz.loadBanner(true, Kidoz.BANNER_POSITION.BOTTOM_CENTER);
-            AddEvent("Loading Bottom Banner");
-        }
-
-        Rect destroyBannerButton = new Rect(0.55f * Screen.width, lineHeight * Screen.height, 0.35f * Screen.width, 0.08f * Screen.height);
-        if (GUI.Button(destroyBannerButton, "Close Banner"))
-        {
-            Kidoz.hideBanner();
-        }
 
         #endregion
 
@@ -279,6 +233,13 @@ public class MainSceneScript : MonoBehaviour
 
 #region IronSource Rewarded callback handlers
 
+    void RewardedVideoAvailabilityChangedEvent(bool available)    {
+        if (available)
+        {
+            AddEvent("Rewarded Ad Ready");
+        }        
+    }
+
     void RewardedVideoAdReadyEvent()
     {
         Debug.Log("unity-script: I got RewardedAdReadyEvent");
@@ -329,112 +290,6 @@ public class MainSceneScript : MonoBehaviour
 
     #endregion
 
-    #region Kidoz Direct
-
-    #region Kidoz Direct init
-    public void onKidozInitSuccess(string value)
-    {
-        print("SampleCode | KidozInitSuccess");
-        Kidoz.printToastMessage("KidozInitSuccess");
-        AddEvent("Kidoz Init Success");
-
-    }
-
-    public void onKidozInitError(string value)
-    {
-        string errMsg = "KidozInitError: " + value;
-        print("SampleCode | " + errMsg);
-        Kidoz.printToastMessage(errMsg);
-        AddEvent("Kidoz Init error:: " + errMsg);
-    }
-
-#endregion
-
-#region Kidoz Direct Rewarded callback handlers
-    private void onRewarded(string value)
-    {
-        print("SampleCode |onRewardedDone");
-        Kidoz.printToastMessage("SampleCode | onRewarded");
-        AddEvent("On User Rewarded:: " + value);
-    }
-
-    private void onRewardedVideoStarted(string value)
-    {
-        print("SampleCode |onRewardedVideoStarted");
-        AddEvent("Rewarded Video Started");
-    }
-
-    private void rewardedOpen(string value)
-    {
-        AddEvent("Rewarded Started");
-    }
-
-    private void rewardedClose(string value)
-    {
-        AddEvent("Rewarded Close");
-    }
-
-    private void rewardedReady(string value)
-    {
-        Kidoz.printToastMessage("SampleCode | rewardedReady");
-        AddEvent("Rewarded Ready");
-    }
-
-    private void rewardedOnLoadFail(string value)
-    {
-        Kidoz.printToastMessage("SampleCode | rewardedOnLoadFail");
-        AddEvent("Rewarded Load Fail:: " + value);
-    }
-
-    private void rewardedOnNoOffers(string value)
-    {
-        print("SampleCode | rewardedOnNoOffers");
-        Kidoz.printToastMessage("SampleCode | rewardedOnNoOffers");
-        AddEvent("Rewarded No Offers:: " + value);
-    }
-#endregion
-
-
-
-#region Kidoz Direct Banner callback handlers
-    private void bannerReady(string value)
-    {
-        print("SampleCode | bannerReady");
-        Kidoz.printToastMessage("SampleCode | bannerReady");
-        AddEvent("Banner Ready");
-    }
-
-    private void bannerClose(string value)
-    {
-        print("SampleCode | bannerHide");
-        Kidoz.printToastMessage("SampleCode | bannerHide");
-        AddEvent("Banner Hide");
-    }
-
-    private void bannerLoadError(string value)
-    {
-        print("SampleCode | bannerLoadError: " + value);
-        Kidoz.printToastMessage("SampleCode | bannerLoadError: " + value);
-        AddEvent("Banner Load Error:: " + value);
-    }
-
-    private void bannerShowError(string value)
-    {
-        print("SampleCode | bannerShowError: " + value);
-        Kidoz.printToastMessage("SampleCode | bannerShowError: " + value);
-        AddEvent("Banner Show Error:: " + value);
-    }
-
-    private void bannerNoOffers(string value)
-    {
-        print("SampleCode | bannerNoOffers");
-        Kidoz.printToastMessage("SampleCode | bannerNoOffers");
-        AddEvent("Banner No Offers:: " + value);
-    }
-
-#endregion
-
-#endregion
 
     public void AddEvent(string eventString)
     {
